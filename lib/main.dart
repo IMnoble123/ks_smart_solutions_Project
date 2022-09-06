@@ -5,7 +5,10 @@ import 'package:usermodel/Controller/admin_controller.dart';
 import 'package:usermodel/Controller/admin_page.dart';
 import 'package:usermodel/Controller/admin_projectcontroller.dart';
 import 'package:usermodel/Controller/login_admincontroller.dart';
+import 'package:usermodel/Controller/user_cate.dart';
+import 'package:usermodel/Controller/user_controller.dart';
 import 'package:usermodel/view/screens/components/admin/admin_user.dart';
+import 'package:usermodel/view/screens/components/home_page.dart';
 import 'firebase_options.dart';
 
 void main()async {
@@ -24,14 +27,16 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_)=> AdminProvider() ),
         ChangeNotifierProvider(create: (_)=> Adminlogin()),
         ChangeNotifierProvider(create: (_)=> AdminInputs()),
-        ChangeNotifierProvider(create: (_)=> AdminProject())
+        ChangeNotifierProvider(create: (_)=> AdminProject()),
+        ChangeNotifierProvider(create: (_)=> HomeInputs()),
+        ChangeNotifierProvider(create: (_)=> UserInputs())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.grey,
         ),
-       home:  const UserAdminPage(),
+       home:  const HomePage(),
       ),
     );
   }

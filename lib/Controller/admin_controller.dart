@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:usermodel/model/user_model.dart';
 
 class AdminProvider with ChangeNotifier {
-
   final formkey = GlobalKey<FormState>();
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -45,9 +44,9 @@ class AdminProvider with ChangeNotifier {
     return null;
   }
 
-  void createValidater() {
+  void createValidater(BuildContext context) {
     if (formkey.currentState!.validate()) {
-      addUser();
+      addUser(context);
     } else {
       return;
     }
@@ -55,12 +54,17 @@ class AdminProvider with ChangeNotifier {
 
 // **** function to submit ****//
 
-  addUser() async {
+  addUser(BuildContext context) async {
     final users = FirebaseFirestore.instance.collection("users").doc();
     final userdata = UserModel(
         username: nameController.text,
         dateofbirth: dateController.text,
-        password: passwordController.text);
+        password: passwordController.text,
+        id: users.id
+        );
+
     await users.set(userdata.toJson());
   }
+
+
 }

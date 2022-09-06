@@ -1,9 +1,10 @@
 import 'dart:developer';
-import 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:usermodel/model/api.dart';
 import 'package:usermodel/model/api_mode.dart';
+import 'package:usermodel/model/update.dart';
 import 'package:usermodel/model/user_model.dart';
 
 class AdminProject with ChangeNotifier {
@@ -22,10 +23,18 @@ class AdminProject with ChangeNotifier {
 
   List<String> city = [];
   List<String> websites = [];
-  List<String> companies = [];
+  List<Company> companies = [];
+  List<UserModel> users = [];
   String dropdownvalue = '';
+  String docid = " ";
 
+  Company? selCompany;
+  UserModel? selUser;
   //String cityDropVal = 'Select city';
+
+  updateDocid(String id) {
+    docid = id;
+  }
 
   String? projectValidater(String value) {
     if (value.isEmpty) {
@@ -91,7 +100,7 @@ class AdminProject with ChangeNotifier {
     for (User user in users) {
       city.add(user.address.city);
       websites.add(user.website);
-      companies.add(user.company.name);
+      companies.add(user.company);
     }
     log('city ${city.length}');
     log('web ${websites.length}');
@@ -102,7 +111,19 @@ class AdminProject with ChangeNotifier {
   setCityVal(String val) {
     locationController.text = val;
   }
+
 // update and add name on textfield //
+  fetchUsers() async {
+    final fireStore = FirebaseFirestore.instance;
+    QuerySnapshot querySnapshot = await fireStore.collection('users').get();
+    final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    users = usersFromMap(allData);
+    log(users.length.toString());
+    // usernames = users.map((item) => item.username).toList();
+    // usernames.forEach((element) {
+    //   log(element);
+    // });
+  }
 
   addDropdawn(value) {
     dropdownvalue = value;
@@ -118,10 +139,20 @@ class AdminProject with ChangeNotifier {
   //           .toList());
   // }
 
-  listcovert() async{
-    final list =await FirebaseFirestore.instance.collection("users").get();
-    
-  
-     
+  addProject() async {
+    log('i am worked');
+    //log(docid.toString());
+    final userdata =
+        FirebaseFirestore.instance.collection("users").doc(selUser!.id);
+    final entries = Updateproject(
+        projectname: projectController.text,
+        projectdate: dateController.text,
+        company: selCompany!.name,
+        catchphase: selCompany!.catchPhrase,
+        websites: websiteController.text,
+        location: locationController.text);
+
+    await userdata.collection('projects').add(entries.toJson());
+    // await userdata.update({"projects": entries.toJson()});
   }
 }
